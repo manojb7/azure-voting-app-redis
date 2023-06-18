@@ -4,7 +4,7 @@ count=0
 started=false
 
 until $started || [ $count -eq 3 ]; do
-    ((count++))
+    count=$((count + 1))
     echo "[$STAGE_NAME] Starting container [Attempt: $count]"
 
     testStart=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000)
