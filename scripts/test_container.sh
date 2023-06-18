@@ -3,15 +3,14 @@
 count=0
 started=false
 
-while true; do
-    count=$((count + 1))
+until $started || [ $count -eq 3 ]; do
+    ((count++))
     echo "[$STAGE_NAME] Starting container [Attempt: $count]"
 
     testStart=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000)
 
     if [ "$testStart" -eq 200 ]; then
         started=true
-        break
     else
         sleep 1
     fi
