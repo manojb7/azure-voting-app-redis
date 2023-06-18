@@ -1,18 +1,22 @@
-$count = 0
-do {
-    $count++
-    Write-Output "[$env:STAGE_NAME] Starting container [Attempt: $count]"
-    
-    $testStart = Invoke-WebRequest -Uri http://localhost:8000
-    
-    if ($testStart.statuscode -eq '200') {
-        $started = $true
-    } else {
-        Start-Sleep -Seconds 1
-    }
-    
-} until ($started -or ($count -eq 3))
+#!/bin/bash
 
-if (!$started) {
+count=0
+started=false
+
+while true; do
+    ((count++))
+    echo "[$STAGE_NAME] Starting container [Attempt: $count]"
+
+    testStart=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000)
+
+    if [[ $testStart -eq 200 ]]; then
+        started=true
+        break
+    else
+        sleep 1
+    fi
+done
+
+if ! $started; then
     exit 1
-}
+fi
